@@ -7,7 +7,8 @@
 function calculateSimpleRevenue(purchase, _product) {
    // @TODO: Расчет выручки от операции
     const discountMultiplier = 1 - (purchase.discount / 100);
-    return purchase.sale_price * purchase.quantity * discountMultiplier;
+    const revenue = purchase.sale_price * purchase.quantity * discountMultiplier;
+    return Math.round(revenue * 100) / 100; // округление до 2 знаков
 }
 
 /**
@@ -24,7 +25,7 @@ function calculateBonusByProfit(index, total, seller) {
     else if (index === 1 || index === 2) bonus = seller.profit * 0.10;
     else if (index === total - 1) bonus = 0;
     else bonus = seller.profit * 0.05;
-    return +bonus.toFixed(2);
+    return Math.round(bonus * 100) / 100; // округление до 2 знаков
 }
 
 /**
