@@ -6,8 +6,8 @@
  */
 function calculateSimpleRevenue(purchase, _product) {
    // @TODO: Расчет выручки от операции
-    const discountMultiplier = 1 - (purchase.discount / 100);
-    return purchase.sale_price * purchase.quantity * discountMultiplier;
+    const discount = 1 - (purchase.discount / 100);
+    return purchase.sale_price * purchase.quantity * discount;
 }
 
 /**
@@ -82,9 +82,8 @@ function analyzeSalesData(data, options) {
     // Обработка всех чеков
     data.purchase_records.forEach(record => {
         const seller = sellerIndex[record.seller_id];
-        if (!seller) return; // Пропустить, если продавец не найден
-
         seller.sales_count += 1;
+        seller.revenue += record.total_amount; 
 
         record.items.forEach(item => {
             const product = productIndex[item.sku];
@@ -117,7 +116,7 @@ function analyzeSalesData(data, options) {
 
     // Итоговый отчёт
     return sellerStats.map(seller => ({
-        seller_id: seller.id,
+        seller_id: seller.seller.id,
         name: seller.name,
         revenue: +seller.revenue.toFixed(2),
         profit: +seller.profit.toFixed(2),
