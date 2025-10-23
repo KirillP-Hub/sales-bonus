@@ -90,9 +90,9 @@ function analyzeSalesData(data, options) {
             const product = productIndex[item.sku];
             if (!product) return;
 
-            const cost = product.purchase_price * item.quantity;
-            const revenue = calculateRevenue(item, product);
-            const profit = revenue - cost;
+            const cost = Math.round(product.purchase_price * item.quantity * 100) / 100;
+            const revenue = calculateRevenue(item, product); // уже округлена внутри функции
+            const profit = Math.round((revenue - cost) * 100) / 100;
 
             seller.revenue += revenue;
             seller.profit += profit;
@@ -100,6 +100,12 @@ function analyzeSalesData(data, options) {
             if (!seller.products_sold[item.sku]) seller.products_sold[item.sku] = 0;
             seller.products_sold[item.sku] += item.quantity;
         });
+    });
+
+        // Округление после суммирования
+    sellerStats.forEach(seller => {
+        seller.revenue = Math.round(seller.revenue * 100) / 100;
+        seller.profit = Math.round(seller.profit * 100) / 100;
     });
 
     // Сортировка продавцов по убыванию прибыли
