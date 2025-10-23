@@ -95,7 +95,6 @@ function analyzeSalesData(data, options) {
             const revenue = calculateRevenue(item, product); // уже округлена внутри функции
             const profit = Math.round((revenue - cost) * 100) / 100;
 
-            seller.revenue += revenue;
             seller.profit += profit;
 
             if (!seller.products_sold[item.sku]) seller.products_sold[item.sku] = 0;
