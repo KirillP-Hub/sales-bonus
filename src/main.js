@@ -83,29 +83,22 @@ function analyzeSalesData(data, options) {
     // Обработка всех чеков
     data.purchase_records.forEach(record => {
         const seller = sellerIndex[record.seller_id];
-        if (!seller) return; // Пропустить, если продавец не найден
-
         seller.sales_count += 1;
+        seller.revenue += record.total_amount;
 
         record.items.forEach(item => {
             const product = productIndex[item.sku];
-            if (!product) return;
-
-            const cost = Math.round(product.purchase_price * item.quantity * 100) / 100;
-            const revenue = calculateRevenue(item, product); // уже округлена внутри функции
-            const profit = Math.round((revenue - cost) * 100) / 100;
+            const cost = product.purchase_price * item.quantity;
+            const revenue = calculateRevenue(item, product);
+            const profit = revenue - cost;
 
             seller.profit += profit;
 
-            if (!seller.products_sold[item.sku]) seller.products_sold[item.sku] = 0;
+            if (!seller.products_sold[item.sku]) {
+                seller.products_sold[item.sku] = 0;
+            }
             seller.products_sold[item.sku] += item.quantity;
         });
-    });
-
-        // Округление после суммирования
-    sellerStats.forEach(seller => {
-        seller.revenue = Math.round(seller.revenue * 100) / 100;
-        seller.profit = Math.round(seller.profit * 100) / 100;
     });
 
     // Сортировка продавцов по убыванию прибыли
