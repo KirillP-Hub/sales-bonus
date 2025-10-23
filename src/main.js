@@ -7,8 +7,7 @@
 function calculateSimpleRevenue(purchase, _product) {
    // @TODO: Расчет выручки от операции
     const discountMultiplier = 1 - (purchase.discount / 100);
-    const revenue = purchase.sale_price * purchase.quantity * discountMultiplier;
-    return Math.round(revenue * 100) / 100; // округление до 2 знаков
+    return purchase.sale_price * purchase.quantity * discountMultiplier;
 }
 
 /**
@@ -25,7 +24,7 @@ function calculateBonusByProfit(index, total, seller) {
     else if (index === 1 || index === 2) bonus = seller.profit * 0.10;
     else if (index === total - 1) bonus = 0;
     else bonus = seller.profit * 0.05;
-    return Math.round(bonus * 100) / 100; // округление до 2 знаков
+    return +bonus.toFixed(2);
 }
 
 /**
@@ -83,8 +82,9 @@ function analyzeSalesData(data, options) {
     // Обработка всех чеков
     data.purchase_records.forEach(record => {
         const seller = sellerIndex[record.seller_id];
+        if (!seller) return; // Пропустить, если продавец не найден
+
         seller.sales_count += 1;
-        seller.revenue += record.total_amount;
 
         record.items.forEach(item => {
             const product = productIndex[item.sku];
