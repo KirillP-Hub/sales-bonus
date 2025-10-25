@@ -8,7 +8,7 @@ function calculateSimpleRevenue(purchase, _product) {
    // @TODO: Расчет выручки от операции
     const discount= 1 - (purchase.discount / 100);
     const revenue = purchase.sale_price * purchase.quantity * discount;
-    return Math.round(revenue * 100) / 100; // округление до 2 знаков
+    return revenue; // округление до 2 знаков
 }
 
 /**
@@ -25,7 +25,7 @@ function calculateBonusByProfit(index, total, seller) {
     else if (index === 1 || index === 2) bonus = seller.profit * 0.10;
     else if (index === total - 1) bonus = 0;
     else bonus = seller.profit * 0.05;
-    return Math.round(bonus * 100) / 100; // округление до 2 знаков
+    return bonus; // округление до 2 знаков
 }
 
 /**
@@ -35,23 +35,6 @@ function calculateBonusByProfit(index, total, seller) {
  * @returns {{revenue, top_products, bonus, name, sales_count, profit, seller_id}[]}
  */
 function analyzeSalesData(data, options) {
-    // @TODO: Проверка входных данных
-
-    // @TODO: Проверка наличия опций
-
-    // @TODO: Подготовка промежуточных данных для сбора статистики
-
-    // @TODO: Индексация продавцов и товаров для быстрого доступа
-
-    // @TODO: Расчет выручки и прибыли для каждого продавца
-
-    // @TODO: Сортировка продавцов по прибыли
-
-    // @TODO: Назначение премий на основе ранжирования
-
-    // @TODO: Подготовка итоговой коллекции с нужными полями
-
-    // Проверка входных данных
     if (!data
         || !Array.isArray(data.sellers) || data.sellers.length === 0
         || !Array.isArray(data.products) || data.products.length === 0
@@ -88,24 +71,19 @@ function analyzeSalesData(data, options) {
 
         record.items.forEach(item => {
             const product = productIndex[item.sku];
+            if (!product) return; // пропускаем, если товар не найден
+            
             const cost = product.purchase_price * item.quantity;
-            const revenue = calculateRevenue(item, product);
+            const calculateRevenue(item, product);
             const profit = revenue - cost;
 
+           /* seller.revenue += revenue; */
             seller.profit += profit;
 
-            if (!seller.products_sold[item.sku]) {
-                seller.products_sold[item.sku] = 0;
-            }
+            if (!seller.products_sold[item.sku]) seller.products_sold[item.sku] = 0;
             seller.products_sold[item.sku] += item.quantity;
         });
     });
-
-    // Округление после суммирования
-    /* sellerStats.forEach(seller => {
-        seller.revenue = Math.round(seller.revenue * 100) / 100;
-        seller.profit = Math.round(seller.profit * 100) / 100;
-    }); */
 
     // Сортировка продавцов по убыванию прибыли
     sellerStats.sort((a, b) => b.profit - a.profit);
