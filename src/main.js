@@ -6,8 +6,8 @@
  */
 function calculateSimpleRevenue(purchase, _product) {
    // @TODO: Расчет выручки от операции
-    const discountMultiplier = 1 - (purchase.discount / 100);
-    const revenue = purchase.sale_price * purchase.quantity * discountMultiplier;
+    const discount= 1 - (purchase.discount / 100);
+    const revenue = purchase.sale_price * purchase.quantity * discount;
     return Math.round(revenue * 100) / 100; // округление до 2 знаков
 }
 
@@ -83,17 +83,18 @@ function analyzeSalesData(data, options) {
     // Обработка всех чеков
     data.purchase_records.forEach(record => {
         const seller = sellerIndex[record.seller_id];
-        seller.sales_count += 1; 
+        seller.sales_count += 1;
+        seller.revenue += record.total_amount;
 
         record.items.forEach(item => {
             const product = productIndex[item.sku];
             if (!product) return; // пропускаем, если товар не найден
-
+            
             const cost = Math.round(product.purchase_price * item.quantity * 100) / 100;
             const revenue = calculateRevenue(item, product);
             const profit = Math.round((revenue - cost) * 100) / 100;
 
-            seller.revenue += revenue;
+           /* seller.revenue += revenue; */
             seller.profit += profit;
 
             if (!seller.products_sold[item.sku]) seller.products_sold[item.sku] = 0;
@@ -102,10 +103,10 @@ function analyzeSalesData(data, options) {
     });
 
     // Округление после суммирования
-    sellerStats.forEach(seller => {
+    /* sellerStats.forEach(seller => {
         seller.revenue = Math.round(seller.revenue * 100) / 100;
         seller.profit = Math.round(seller.profit * 100) / 100;
-    });
+    }); */
 
     // Сортировка продавцов по убыванию прибыли
     sellerStats.sort((a, b) => b.profit - a.profit);
