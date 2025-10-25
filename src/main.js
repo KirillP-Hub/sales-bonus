@@ -88,16 +88,15 @@ function analyzeSalesData(data, options) {
 
         record.items.forEach(item => {
             const product = productIndex[item.sku];
-            if (!product) return; // пропускаем, если товар не найден
-            
-            const cost = Math.round(product.purchase_price * item.quantity * 100) / 100;
+            const cost = product.purchase_price * item.quantity;
             const revenue = calculateRevenue(item, product);
-            const profit = Math.round((revenue - cost) * 100) / 100;
+            const profit = revenue - cost;
 
-           /* seller.revenue += revenue; */
             seller.profit += profit;
 
-            if (!seller.products_sold[item.sku]) seller.products_sold[item.sku] = 0;
+            if (!seller.products_sold[item.sku]) {
+                seller.products_sold[item.sku] = 0;
+            }
             seller.products_sold[item.sku] += item.quantity;
         });
     });
