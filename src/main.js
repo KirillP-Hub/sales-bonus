@@ -74,7 +74,7 @@ function analyzeSalesData(data, options) {
             if (!product) return; // пропускаем, если товар не найден
             
             const cost = product.purchase_price * item.quantity;
-            const calculateRevenue(item, product);
+            const revenue = calculateRevenue(item, product);
             const profit = revenue - cost;
 
            /* seller.revenue += revenue; */
